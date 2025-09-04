@@ -49,28 +49,34 @@ export function MailList({ selectedMailId, onMailSelect }: MailListProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b p-4">
-        <h2 className="text-lg font-semibold">Inbox</h2>
-        <p className="text-sm text-muted-foreground">
-          {mails.filter((mail) => !mail.read).length} unread messages
-        </p>
+      <div className="nav-gradient border-b p-6">
+        <div className="space-y-1">
+          <h2 className="text-xl font-semibold text-foreground">Posteingang</h2>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground">
+              {mails.filter((mail) => !mail.read).length} ungelesene Nachrichten
+            </p>
+            <div className="badge-info">{mails.length} Total</div>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto">
         {mails.map((mail, index) => (
           <div key={mail.id}>
-            <Card
+            <div
               className={cn(
-                "cursor-pointer rounded-none border-0 border-b transition-colors hover:bg-muted/50",
-                selectedMailId === mail.id && "bg-muted",
-                !mail.read && "bg-blue-50/50 dark:bg-blue-950/20",
+                "table-row-hover cursor-pointer border-b border-border/30 transition-all duration-300",
+                selectedMailId === mail.id && "bg-gradient-secondary shadow-sm",
+                !mail.read &&
+                  "bg-gradient-accent/5 border-l-4 border-l-primary/50",
               )}
               onClick={() => onMailSelect(mail)}
             >
-              <div className="p-4">
-                <div className="flex items-start gap-3">
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    <AvatarFallback className="text-xs">
+              <div className="p-4 transition-all duration-300 hover:px-6">
+                <div className="flex items-start gap-4">
+                  <Avatar className="h-10 w-10 flex-shrink-0 ring-2 ring-border/20 transition-all duration-300 hover:ring-primary/30">
+                    <AvatarFallback className="bg-gradient-primary text-xs font-medium text-primary-foreground">
                       {getInitials(mail.sender)}
                     </AvatarFallback>
                   </Avatar>
@@ -114,13 +120,16 @@ export function MailList({ selectedMailId, onMailSelect }: MailListProps) {
                     <div className="flex items-center justify-between">
                       <div className="flex gap-1">
                         {mail.labels.map((label) => (
-                          <Badge
+                          <div
                             key={label}
-                            variant="secondary"
-                            className="px-1.5 py-0 text-xs"
+                            className={cn(
+                              "badge-info transition-all duration-200 hover:scale-105",
+                              label === "Urgent" && "badge-warning",
+                              label === "Important" && "badge-success",
+                            )}
                           >
                             {label}
-                          </Badge>
+                          </div>
                         ))}
                       </div>
 
@@ -132,7 +141,7 @@ export function MailList({ selectedMailId, onMailSelect }: MailListProps) {
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
             {index < mails.length - 1 && <Separator />}
           </div>
         ))}

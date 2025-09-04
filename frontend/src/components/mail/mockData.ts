@@ -3,276 +3,283 @@ import { Mail, MailFolder } from "./types";
 export const mockMails: Mail[] = [
   {
     id: "1",
-    subject: "Welcome to our platform!",
-    sender: "Sarah Johnson",
-    senderEmail: "sarah.johnson@company.com",
+    subject: "Kostenübernahme für Physiotherapie",
+    sender: "Anna Müller",
+    senderEmail: "anna.mueller@email.de",
     preview:
-      "Thank you for joining us. Here's everything you need to get started with your new account...",
-    body: `Dear User,
+      "Sehr geehrte Damen und Herren, ich benötige eine Kostenübernahme für eine Physiotherapie nach meinem Bandscheibenvorfall...",
+    body: `Sehr geehrte Damen und Herren,
 
-Thank you for joining our platform! We're excited to have you on board.
+nach meinem Bandscheibenvorfall im Dezember 2023 hat mein Orthopäde mir eine Physiotherapie verordnet.
 
-Here's everything you need to get started:
-1. Complete your profile setup
-2. Explore our dashboard features  
-3. Connect with your team members
-4. Start your first project
+Details zu meiner Anfrage:
+- Diagnose: Bandscheibenvorfall L4/L5
+- Verordnete Behandlungen: 20 Einheiten Physiotherapie
+- Behandlungszeitraum: 6 Wochen
+- Praxis: Physiotherapie Schmidt, München
 
-If you have any questions, don't hesitate to reach out to our support team.
+Ich bitte um schnellstmögliche Bearbeitung, da die Schmerzen sehr stark sind.
 
-Best regards,
-Sarah Johnson
-Customer Success Team`,
+Mit freundlichen Grüßen,
+Anna Müller
+Versichertennummer: 12345678`,
     date: new Date("2024-01-15T09:30:00"),
     read: false,
     starred: true,
     important: true,
-    labels: ["Welcome", "Getting Started"],
+    labels: ["Kostenübernahme", "Physiotherapie"],
     attachments: [
       {
-        name: "getting-started-guide.pdf",
-        size: "2.3 MB",
+        name: "arztbericht-orthopaedie.pdf",
+        size: "1.8 MB",
         type: "PDF",
       },
     ],
   },
   {
     id: "2",
-    subject: "Project Update - Q1 2024",
-    sender: "Michael Chen",
-    senderEmail: "m.chen@company.com",
+    subject: "Widerspruch gegen Ablehnungsbescheid",
+    sender: "Klaus Weber",
+    senderEmail: "k.weber@email.de",
     preview:
-      "Here's the latest update on our Q1 projects. We've made significant progress on the client deliverables...",
-    body: `Team,
+      "Hiermit lege ich Widerspruch gegen Ihren Ablehnungsbescheid vom 10.01.2024 bezüglich meiner Reha-Maßnahme ein...",
+    body: `Sehr geehrte Damen und Herren,
 
-Here's the latest update on our Q1 projects:
+hiermit lege ich förmlich Widerspruch gegen Ihren Ablehnungsbescheid vom 10.01.2024 ein.
 
-Project Alpha: 85% complete
-- Client feedback incorporated
-- Testing phase initiated
-- Launch scheduled for next week
+Begründung:
+- Aktenzeichen: RH-2024-0156
+- Abgelehnte Leistung: Rehabilitationsmaßnahme nach Herzinfarkt
+- Medizinische Notwendigkeit ist gegeben
+- Facharzt bestätigt dringende Empfehlung
 
-Project Beta: 60% complete  
-- Design reviews completed
-- Development in progress
-- Stakeholder meeting scheduled
+Ich bitte um erneute Prüfung meines Falls und stelle alle erforderlichen Unterlagen zur Verfügung.
 
-Let me know if you have any questions.
-
-Best,
-Michael`,
+Mit freundlichen Grüßen,
+Klaus Weber
+Versichertennummer: 87654321`,
     date: new Date("2024-01-14T14:22:00"),
     read: true,
     starred: false,
-    important: false,
-    labels: ["Projects", "Updates"],
+    important: true,
+    labels: ["Widerspruch", "Rehabilitation"],
   },
   {
     id: "3",
-    subject: "Security Alert: Login from new device",
-    sender: "Security Team",
-    senderEmail: "security@company.com",
+    subject: "Versichertenkarte verloren - Ersatzkarte beantragen",
+    sender: "Maria Schmidt",
+    senderEmail: "maria.schmidt@email.de",
     preview:
-      "We detected a login to your account from a new device. If this was you, no action is needed...",
-    body: `Security Alert
+      "Guten Tag, ich habe meine Versichertenkarte verloren und benötige dringend eine Ersatzkarte...",
+    body: `Guten Tag,
 
-We detected a login to your account from a new device:
+ich habe leider meine Versichertenkarte verloren und benötige dringend eine Ersatzkarte.
 
-Device: MacBook Pro
-Location: San Francisco, CA
-Time: January 14, 2024 at 2:15 PM PST
-IP Address: 192.168.1.100
+Details:
+- Versichertennummer: 11223344
+- Verloren am: 12.01.2024
+- Ort: Hamburg Hauptbahnhof
+- Dringlichkeit: Habe morgen einen Arzttermin
 
-If this was you, no action is needed. If you don't recognize this activity, please contact our security team immediately.
+Können Sie mir bitte eine Ersatzkarte zusenden oder eine vorläufige Bescheinigung ausstellen?
 
-Security Team
-company.com`,
+Vielen Dank für Ihre schnelle Hilfe.
+
+Mit freundlichen Grüßen,
+Maria Schmidt`,
     date: new Date("2024-01-14T14:15:00"),
     read: false,
     starred: false,
     important: true,
-    labels: ["Security", "Alert"],
+    labels: ["Versichertenkarte", "Verlust"],
   },
   {
     id: "4",
-    subject: "Meeting Reminder: Team Standup Tomorrow",
-    sender: "Calendar Bot",
-    senderEmail: "calendar@company.com",
+    subject: "Terminanfrage: Beratung zu Zusatzleistungen",
+    sender: "Thomas Becker",
+    senderEmail: "thomas.becker@email.de",
     preview:
-      "Reminder: You have a team standup meeting scheduled for tomorrow at 10:00 AM...",
-    body: `Meeting Reminder
+      "Sehr geehrtes Team, ich würde gerne einen Beratungstermin zu Ihren Zusatzleistungen vereinbaren...",
+    body: `Sehr geehrtes Team,
 
-You have a team standup meeting scheduled for:
+ich würde gerne einen Beratungstermin zu Ihren Zusatzleistungen vereinbaren.
 
-Date: January 16, 2024
-Time: 10:00 AM - 10:30 AM PST
-Location: Conference Room A / Zoom
-Meeting ID: 123-456-789
+Interessensgebiete:
+- Zahnzusatzversicherung
+- Auslandsreisekrankenversicherung  
+- Naturheilverfahren
+- Chefarztbehandlung
 
-Agenda:
-- Sprint progress review
-- Blockers discussion
-- Next sprint planning
+Verfügbare Zeiten:
+- Montag bis Freitag: 14:00 - 18:00 Uhr
+- Bevorzugt: Persönlicher Termin in der Geschäftsstelle
 
-Calendar Bot`,
+Bitte teilen Sie mir einen passenden Termin mit.
+
+Mit freundlichen Grüßen,
+Thomas Becker
+Versichertennummer: 55667788`,
     date: new Date("2024-01-14T12:00:00"),
     read: true,
     starred: false,
     important: false,
-    labels: ["Meetings", "Reminders"],
+    labels: ["Beratung", "Zusatzleistungen"],
   },
   {
     id: "5",
-    subject: "Invoice #INV-2024-001 - Payment Due",
-    sender: "Billing Department",
-    senderEmail: "billing@company.com",
+    subject: "Rückerstattung Arztkosten - Privatrechnung",
+    sender: "Sandra Fischer",
+    senderEmail: "sandra.fischer@email.de",
     preview:
-      "Your invoice INV-2024-001 for $1,250.00 is due on January 20th. Please process payment at your earliest...",
-    body: `Invoice Payment Reminder
+      "Sehr geehrte Damen und Herren, ich bitte um Erstattung der Kosten für eine privatärztliche Behandlung...",
+    body: `Sehr geehrte Damen und Herren,
 
-Invoice Details:
-- Invoice Number: INV-2024-001
-- Amount: $1,250.00
-- Due Date: January 20, 2024
-- Services: Q1 2024 Subscription
+ich bitte um Erstattung der Kosten für eine privatärztliche Behandlung.
 
-Payment Methods:
-- Online portal: portal.company.com
-- Bank transfer details attached
-- Credit card on file
+Behandlungsdetails:
+- Datum: 08.01.2024
+- Arzt: Dr. med. Hartmann, Privatpraxis
+- Behandlung: Notfallbehandlung am Wochenende
+- Rechnungsbetrag: 180,00 €
+- Grund: Kein Kassenarzt verfügbar
 
-Please process payment by the due date to avoid service interruption.
+Die Originalrechnung ist beigefügt. Ich bitte um zeitnahe Bearbeitung.
 
-Billing Department`,
+Mit freundlichen Grüßen,
+Sandra Fischer
+Versichertennummer: 99887766`,
     date: new Date("2024-01-13T16:45:00"),
     read: true,
     starred: false,
     important: true,
-    labels: ["Billing", "Invoice"],
+    labels: ["Erstattung", "Privatrechnung"],
+    attachments: [
+      {
+        name: "privatrechnung-dr-hartmann.pdf",
+        size: "0.8 MB",
+        type: "PDF",
+      },
+    ],
   },
   {
     id: "6",
-    subject: "Weekly Newsletter - Tech Updates",
-    sender: "Tech News",
-    senderEmail: "newsletter@technews.com",
+    subject: "Änderung der Bankverbindung",
+    sender: "Robert Schneider",
+    senderEmail: "robert.schneider@email.de",
     preview:
-      "This week in tech: AI breakthroughs, new frameworks, and industry insights you shouldn't miss...",
-    body: `Weekly Tech Newsletter
+      "Hiermit teile ich Ihnen meine neue Bankverbindung für Erstattungen mit...",
+    body: `Sehr geehrte Damen und Herren,
 
-This Week's Highlights:
-🤖 AI Breakthroughs
-- New LLM model released with 40% better performance
-- AI coding assistants reach new milestone
+hiermit teile ich Ihnen meine neue Bankverbindung mit:
 
-🚀 Framework Updates  
-- React 19 beta features announced
-- Vue 3.4 performance improvements
+Neue Bankdaten:
+- Kontoinhaber: Robert Schneider
+- IBAN: DE89 1234 5678 9012 3456 78
+- BIC: DEUTDEFF123
+- Bank: Deutsche Bank AG
 
-📊 Industry Insights
-- Developer survey results
-- Remote work trends 2024
+Alte Bankverbindung:
+- IBAN: DE12 9876 5432 1098 7654 32
 
-Read more at technews.com
+Bitte aktualisieren Sie meine Daten für zukünftige Erstattungen.
 
-Unsubscribe | Manage Preferences`,
+Mit freundlichen Grüßen,
+Robert Schneider
+Versichertennummer: 44556677`,
     date: new Date("2024-01-13T08:00:00"),
     read: false,
     starred: false,
     important: false,
-    labels: ["Newsletter", "Tech"],
+    labels: ["Bankdaten", "Änderung"],
   },
   {
     id: "7",
-    subject: "Congratulations! Your proposal has been accepted",
-    sender: "Jane Smith",
-    senderEmail: "jane.smith@client.com",
+    subject: "Schwangerschaft - Anmeldung und Leistungen",
+    sender: "Julia Hoffmann",
+    senderEmail: "julia.hoffmann@email.de",
     preview:
-      "We're pleased to inform you that your project proposal has been accepted. We'd like to schedule a kickoff meeting...",
-    body: `Dear Team,
+      "Sehr geehrtes Team, ich bin schwanger und möchte mich über die Leistungen der Krankenkasse informieren...",
+    body: `Sehr geehrtes Team,
 
-We're pleased to inform you that your project proposal has been accepted!
+ich bin schwanger (8. Woche) und möchte mich über die Leistungen informieren.
 
-Next Steps:
-1. Contract signing - this week
-2. Kickoff meeting - January 18th
-3. Project timeline review
-4. Resource allocation
+Meine Fragen:
+1. Welche Vorsorgeuntersuchungen werden übernommen?
+2. Kostenübernahme für Hebamme
+3. Mutterschaftsgeld - Antragsstellung
+4. Zusätzliche Leistungen für Schwangere
 
-We're excited to work with you on this project and look forward to a successful collaboration.
+Erwarteter Geburtstermin: September 2024
 
-Best regards,
-Jane Smith
-Project Manager`,
+Ich freue mich auf Ihre Informationen und einen Beratungstermin.
+
+Mit freundlichen Grüßen,
+Julia Hoffmann
+Versichertennummer: 33445566`,
     date: new Date("2024-01-12T11:30:00"),
     read: true,
     starred: true,
     important: true,
-    labels: ["Client", "Good News"],
+    labels: ["Schwangerschaft", "Beratung"],
   },
   {
     id: "8",
-    subject: "System Maintenance Scheduled - January 20th",
-    sender: "IT Operations",
-    senderEmail: "it-ops@company.com",
+    subject: "Beschwerde über Wartezeit beim Facharzt",
+    sender: "Heinrich Müller",
+    senderEmail: "heinrich.mueller@email.de",
     preview:
-      "Scheduled system maintenance will occur on January 20th from 2:00 AM to 6:00 AM PST. Services will be temporarily unavailable...",
-    body: `System Maintenance Notice
+      "Sehr geehrte Damen und Herren, ich beschwere mich über die unzumutbare Wartezeit für einen Facharzttermin...",
+    body: `Sehr geehrte Damen und Herren,
 
-Scheduled maintenance window:
-Date: January 20, 2024
-Time: 2:00 AM - 6:00 AM PST
-Duration: 4 hours (estimated)
+ich beschwere mich über die unzumutbare Wartezeit für einen Facharzttermin.
 
-Affected Services:
-- Main application
-- Email services  
-- File storage
-- API endpoints
+Situation:
+- Überweisung zum Kardiologen seit 15.12.2023
+- Nächster freier Termin: Mai 2024
+- Wartezeit: 5 Monate
+- Beschwerden: Herzrhythmusstörungen
 
-During maintenance:
-- All services will be temporarily unavailable
-- Automatic backups will be performed
-- Security updates will be applied
+Diese Wartezeit ist bei meinen Beschwerden nicht akzeptabel. Ich bitte um Ihre Unterstützung bei der Terminvermittlung.
 
-We apologize for any inconvenience.
-
-IT Operations Team`,
+Mit freundlichen Grüßen,
+Heinrich Müller
+Versichertennummer: 66778899`,
     date: new Date("2024-01-12T09:15:00"),
     read: true,
     starred: false,
-    important: false,
-    labels: ["IT", "Maintenance"],
+    important: true,
+    labels: ["Beschwerde", "Terminvermittlung"],
   },
 ];
 
 export const mockFolders: MailFolder[] = [
   {
     id: "inbox",
-    name: "Inbox",
+    name: "Posteingang",
     count: 5,
     icon: "inbox",
   },
   {
     id: "sent",
-    name: "Sent",
+    name: "Gesendet",
     count: 12,
     icon: "send",
   },
   {
     id: "drafts",
-    name: "Drafts",
+    name: "Entwürfe",
     count: 3,
     icon: "file-text",
   },
   {
     id: "starred",
-    name: "Starred",
+    name: "Markiert",
     count: 2,
     icon: "star",
   },
   {
     id: "important",
-    name: "Important",
+    name: "Wichtig",
     count: 4,
     icon: "alert-circle",
   },
@@ -284,7 +291,7 @@ export const mockFolders: MailFolder[] = [
   },
   {
     id: "trash",
-    name: "Trash",
+    name: "Papierkorb",
     count: 1,
     icon: "trash",
   },
