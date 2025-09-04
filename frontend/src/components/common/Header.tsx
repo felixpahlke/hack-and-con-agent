@@ -23,14 +23,17 @@ export function Header() {
   const navItems: {
     title: string;
     path: string;
-  }[] = [{ title: "Items", path: "/items" }];
+  }[] = [
+    // { title: "Mail", path: "/mail" },
+    // { title: "Items", path: "/items" },
+  ];
 
-  if (currentUser?.is_superuser) {
-    navItems.push({ title: "Admin", path: "/admin" });
-  }
+  // if (currentUser?.is_superuser) {
+  //   navItems.push({ title: "Admin", path: "/admin" });
+  // }
 
   return (
-    <header className="bg-background sticky top-0 z-50 flex h-12 w-full items-center border-b">
+    <header className="sticky top-0 z-50 flex h-12 w-full items-center border-b bg-background">
       <div className="flex h-14 w-full items-center gap-2 px-4">
         {isMobile ? (
           <Sheet>
@@ -38,26 +41,26 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-foreground h-8 w-8"
+                className="h-8 w-8 text-foreground"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="sm:w-[300px] w-[240px]">
+            <SheetContent side="left" className="w-[240px] sm:w-[300px]">
               <nav className="mt-6 flex flex-col space-y-4">
                 {navItems.map((item) => (
                   <Link
                     key={item.title}
                     to={item.path}
-                    className="text-foreground/60 hover:text-foreground/80 text-lg font-medium transition-colors"
+                    className="text-lg font-medium text-foreground/60 transition-colors hover:text-foreground/80"
                   >
                     {item.title}
                   </Link>
                 ))}
                 <Link
                   to="/settings"
-                  className="text-foreground/60 hover:text-foreground/80 text-lg font-medium transition-colors"
+                  className="text-lg font-medium text-foreground/60 transition-colors hover:text-foreground/80"
                 >
                   User Settings
                 </Link>
@@ -73,22 +76,22 @@ export function Header() {
         ) : (
           <Link to="/" className="mr-6 flex items-center space-x-2">
             <span className="text-sm">
-              IBM <span className="font-semibold">Client Engineering</span>
+              Mail<span className="font-semibold">Care</span>
             </span>
           </Link>
         )}
 
         <Separator
           orientation="vertical"
-          className="md:block mr-2 hidden h-4"
+          className="mr-2 hidden h-4 md:block"
         />
 
-        <nav className="md:flex hidden items-center space-x-8 pl-4 text-sm">
+        <nav className="hidden items-center space-x-8 pl-4 text-sm md:flex">
           {navItems.map((item) => (
             <Link
               key={item.title}
               to={item.path}
-              className="text-muted-foreground hover:text-foreground/80 transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground/80"
             >
               {item.title}
             </Link>
