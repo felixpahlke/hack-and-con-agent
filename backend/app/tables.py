@@ -27,21 +27,21 @@ class Item(SQLModel, table=True):
 
 class AgentRun(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    mail_sender: str = Field(max_length=255)
-    mail_subject: str = Field(max_length=255)
-    mail_body: str = Field(max_length=255)
-    status: str = Field(max_length=255)
-    status_message: str = Field(max_length=255)
-    draft_body: str = Field(max_length=255)
-    draft_subject: str = Field(max_length=255)
+    mail_sender: str = Field()
+    mail_subject: str = Field()
+    mail_body: str = Field()
+    status: str = Field()
+    status_message: str = Field()
+    draft_body: str = Field()
+    draft_subject: str = Field()
     steps: list["Step"] = Relationship(back_populates="agent_run", cascade_delete=True)
 
 
 class Step(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    type: str = Field(max_length=255)
-    text: str = Field(max_length=255)
-    status: str = Field(max_length=255)
+    type: str = Field()
+    text: str = Field()
+    status: str = Field()
     agent_run_id: uuid.UUID = Field(
         foreign_key="agentrun.id", nullable=False, ondelete="CASCADE"
     )

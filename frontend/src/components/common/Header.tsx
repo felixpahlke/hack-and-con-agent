@@ -33,7 +33,7 @@ export function Header() {
   // }
 
   return (
-    <header className="sticky top-0 z-50 flex h-12 w-full items-center border-b bg-background">
+    <header className="sticky top-0 z-50 flex h-16 w-full items-center border-b bg-background">
       <div className="flex h-14 w-full items-center gap-2 px-4">
         {isMobile ? (
           <Sheet>
@@ -75,7 +75,7 @@ export function Header() {
           </Sheet>
         ) : (
           <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-sm">
+            <span className="text-xl">
               Mail<span className="font-semibold">Care</span>
             </span>
           </Link>

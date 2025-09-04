@@ -1,5 +1,13 @@
-export type AgentRun = {
-  message: string;
+export type AgentRunResponse = {
+  run_id: string;
+};
+
+export type AgentStatusResponse = {
+  steps: Array<Step>;
+  status: string;
+  status_message: string;
+  draft_body: string;
+  draft_subject: string;
 };
 
 export type Body_login_login_access_token = {
@@ -39,6 +47,13 @@ export type ItemsPublic = {
 
 export type Message = {
   message: string;
+};
+
+export type Step = {
+  id: string;
+  type: string;
+  text: string;
+  status: string;
 };
 
 export type Token = {

@@ -1,13 +1,16 @@
 import logging
+import uuid
 from typing import Annotated, Literal
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_ibm import ChatWatsonx
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
+from sqlmodel import Session
 from typing_extensions import TypedDict
 
 from app.services.watsonx_provider import WatsonxProvider
+from app.tables import AgentRun, Step
 
 
 class State(TypedDict):
@@ -17,6 +20,8 @@ class State(TypedDict):
     messages: Annotated[list, add_messages] = []
     next_agent: str
     expert_analysis: str
+    session: Session
+    agent_run_id: uuid.UUID
 
 
 graph_builder = StateGraph(State)
@@ -28,9 +33,54 @@ llm = ChatWatsonx(
 )
 
 
+def create_step(
+    session: Session,
+    agent_run_id: uuid.UUID,
+    step_type: str,
+    text: str,
+    status: str = "completed",
+):
+    """Helper function to create a step in the database."""
+    step = Step(type=step_type, text=text, status=status, agent_run_id=agent_run_id)
+    session.add(step)
+    session.commit()
+    session.refresh(step)
+    return step
+
+
+def update_agent_run_status(
+    session: Session, agent_run_id: uuid.UUID, status: str, status_message: str
+):
+    """Helper function to update the agent run status."""
+    agent_run = session.get(AgentRun, agent_run_id)
+    if agent_run:
+        agent_run.status = status
+        agent_run.status_message = status_message
+        session.add(agent_run)
+        session.commit()
+        session.refresh(agent_run)
+
+
 def master_agent(state: State):
     """Orchestrator agent that decides which expert agent should handle the request."""
     print("🎯 Master agent called - analyzing request to determine expert agent")
+
+    # Create step for master agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "master_agent",
+        "Analyzing request to determine appropriate expert agent",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Master agent analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Orchestrator-Agent für eine deutsche Krankenkasse. 
@@ -81,6 +131,22 @@ Antworte nur mit einem Wort: zuzahlung, familienversicherung, pflegeversicherung
         expert_agent = "sonstiges"
 
     print(f"✅ Master agent decision: routing to '{expert_agent}' expert")
+
+    # Update step status to completed
+    # Get the most recent step for this agent run
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(Step.agent_run_id == state["agent_run_id"], Step.type == "master_agent")
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = f"Routed request to {expert_agent} expert agent"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "next_agent": expert_agent,
     }
@@ -89,6 +155,23 @@ Antworte nur mit einem Wort: zuzahlung, familienversicherung, pflegeversicherung
 def zuzahlung_expert(state: State):
     """Expert agent for co-payment related inquiries."""
     print("💰 Zuzahlung expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "zuzahlung_expert",
+        "Analyzing co-payment related inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Zuzahlung expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Zuzahlungen bei einer deutschen Krankenkasse.
@@ -108,6 +191,23 @@ def zuzahlung_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Zuzahlung expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"], Step.type == "zuzahlung_expert"
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of co-payment inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -116,6 +216,23 @@ def zuzahlung_expert(state: State):
 def familienversicherung_expert(state: State):
     """Expert agent for family insurance inquiries."""
     print("👨‍👩‍👧‍👦 Familienversicherung expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "familienversicherung_expert",
+        "Analyzing family insurance inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Familienversicherung expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Familienversicherung bei einer deutschen Krankenkasse.
@@ -135,6 +252,24 @@ def familienversicherung_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Familienversicherung expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "familienversicherung_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of family insurance inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -143,6 +278,23 @@ def familienversicherung_expert(state: State):
 def pflegeversicherung_expert(state: State):
     """Expert agent for care insurance inquiries."""
     print("🏥 Pflegeversicherung expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "pflegeversicherung_expert",
+        "Analyzing care insurance inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Pflegeversicherung expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Pflegeversicherung bei einer deutschen Krankenkasse.
@@ -163,6 +315,24 @@ def pflegeversicherung_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Pflegeversicherung expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "pflegeversicherung_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of care insurance inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -171,6 +341,23 @@ def pflegeversicherung_expert(state: State):
 def krankengeld_expert(state: State):
     """Expert agent for sick pay inquiries."""
     print("🤒 Krankengeld expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "krankengeld_expert",
+        "Analyzing sick pay inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Krankengeld expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Krankengeld bei einer deutschen Krankenkasse.
@@ -191,6 +378,24 @@ def krankengeld_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Krankengeld expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "krankengeld_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of sick pay inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -199,6 +404,23 @@ def krankengeld_expert(state: State):
 def kostenuebernahme_expert(state: State):
     """Expert agent for cost coverage and reimbursement inquiries."""
     print("💳 Kostenübernahme expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "kostenuebernahme_expert",
+        "Analyzing cost coverage inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Kostenübernahme expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Kostenübernahme und Erstattungen bei einer deutschen Krankenkasse.
@@ -220,6 +442,24 @@ def kostenuebernahme_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Kostenübernahme expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "kostenuebernahme_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of cost coverage inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -228,6 +468,23 @@ def kostenuebernahme_expert(state: State):
 def widerspruch_expert(state: State):
     """Expert agent for appeals and objections."""
     print("⚖️ Widerspruch expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "widerspruch_expert",
+        "Analyzing appeals and objections inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Widerspruch expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Widersprüche und Rechtsmittel bei einer deutschen Krankenkasse.
@@ -249,6 +506,24 @@ def widerspruch_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Widerspruch expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "widerspruch_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of appeals and objections inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -257,6 +532,23 @@ def widerspruch_expert(state: State):
 def mutterschaft_expert(state: State):
     """Expert agent for maternity and pregnancy inquiries."""
     print("🤱 Mutterschaft expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "mutterschaft_expert",
+        "Analyzing maternity and pregnancy inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Mutterschaft expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Mutterschaft und Schwangerschaft bei einer deutschen Krankenkasse.
@@ -278,6 +570,24 @@ def mutterschaft_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Mutterschaft expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "mutterschaft_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of maternity and pregnancy inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -286,6 +596,23 @@ def mutterschaft_expert(state: State):
 def rehabilitation_expert(state: State):
     """Expert agent for rehabilitation inquiries."""
     print("🏃‍♂️ Rehabilitation expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "rehabilitation_expert",
+        "Analyzing rehabilitation inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Rehabilitation expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Rehabilitation und Kuren bei einer deutschen Krankenkasse.
@@ -308,6 +635,24 @@ def rehabilitation_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Rehabilitation expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "rehabilitation_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of rehabilitation inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -316,6 +661,23 @@ def rehabilitation_expert(state: State):
 def terminvermittlung_expert(state: State):
     """Expert agent for appointment scheduling and mediation."""
     print("📅 Terminvermittlung expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "terminvermittlung_expert",
+        "Analyzing appointment scheduling inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Terminvermittlung expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Experte für Terminvermittlung und Beratungstermine bei einer deutschen Krankenkasse.
@@ -338,6 +700,24 @@ def terminvermittlung_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Terminvermittlung expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"],
+            Step.type == "terminvermittlung_expert",
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of appointment scheduling inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -346,6 +726,23 @@ def terminvermittlung_expert(state: State):
 def sonstiges_expert(state: State):
     """Expert agent for general inquiries."""
     print("📋 Sonstiges expert agent called")
+
+    # Create step for this expert agent
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "sonstiges_expert",
+        "Analyzing general inquiry",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"],
+        state["agent_run_id"],
+        "running",
+        "Sonstiges expert analyzing request",
+    )
 
     system_message = SystemMessage(
         content="""Du bist ein Allgemein-Experte für eine deutsche Krankenkasse.
@@ -367,6 +764,23 @@ def sonstiges_expert(state: State):
     response = llm.invoke(messages_with_system)
 
     print("✅ Sonstiges expert completed analysis")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"], Step.type == "sonstiges_expert"
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed analysis of general inquiry"
+        state["session"].add(steps)
+        state["session"].commit()
+
     return {
         "expert_analysis": response.content,
     }
@@ -375,6 +789,20 @@ def sonstiges_expert(state: State):
 def email_drafter_agent(state: State):
     """Agent that drafts a professional email response to the customer."""
     print("✉️ Email drafter agent called")
+
+    # Create step for email drafter
+    create_step(
+        state["session"],
+        state["agent_run_id"],
+        "email_drafter",
+        "Drafting professional email response",
+        "running",
+    )
+
+    # Update run status
+    update_agent_run_status(
+        state["session"], state["agent_run_id"], "running", "Drafting email response"
+    )
 
     # Get the conversation history to understand the context
     conversation_context = ""
@@ -412,6 +840,33 @@ Verwende einen empathischen, aber sachlichen Ton."""
     ]  # Only use the last message
     response = llm.invoke(messages_with_system)
     print("✅ Email drafter completed response")
+
+    # Update step to completed
+    steps = (
+        state["session"]
+        .query(Step)
+        .filter(
+            Step.agent_run_id == state["agent_run_id"], Step.type == "email_drafter"
+        )
+        .order_by(Step.id.desc())
+        .first()
+    )
+    if steps:
+        steps.status = "completed"
+        steps.text = "Completed email draft"
+        state["session"].add(steps)
+        state["session"].commit()
+
+    # Update final run status and save draft
+    agent_run = state["session"].get(AgentRun, state["agent_run_id"])
+    if agent_run:
+        agent_run.status = "completed"
+        agent_run.status_message = "Email response generated successfully"
+        agent_run.draft_body = response.content
+        agent_run.draft_subject = f"Re: {agent_run.mail_subject}"
+        state["session"].add(agent_run)
+        state["session"].commit()
+
     return {"messages": [response]}
 
 
@@ -469,9 +924,15 @@ graph_builder.add_edge("email_drafter", END)
 graph = graph_builder.compile()
 
 
-def run_graph(mail: str):
+def run_graph(mail: str, session: Session, agent_run_id: uuid.UUID):
     print("🚀 Starting agent workflow")
-    result = graph.invoke({"messages": [HumanMessage(content=mail)]})
+    result = graph.invoke(
+        {
+            "messages": [HumanMessage(content=mail)],
+            "session": session,
+            "agent_run_id": agent_run_id,
+        }
+    )
     print("🏁 Agent workflow completed")
     print("MESSAGES", result)
     return result["messages"][-1].content

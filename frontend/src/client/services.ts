@@ -17,7 +17,8 @@ import type {
   ItemPublic,
   ItemsPublic,
   ItemUpdate,
-  AgentRun,
+  AgentRunResponse,
+  AgentStatusResponse,
 } from "./models";
 
 export type LoginData = {
@@ -80,6 +81,9 @@ export type AgentData = {
     body: string;
     sender: string;
     subject: string;
+  };
+  AgentGetAgentRun: {
+    runId: string;
   };
 };
 
@@ -439,12 +443,12 @@ export class ItemsService {
 export class AgentService {
   /**
    * Start Agent
-   * @returns AgentRun Successful Response
+   * @returns AgentRunResponse Successful Response
    * @throws ApiError
    */
   public static agentStartAgent(
     data: AgentData["AgentStartAgent"],
-  ): CancelablePromise<AgentRun> {
+  ): CancelablePromise<AgentRunResponse> {
     const { subject, body, sender } = data;
     return __request(OpenAPI, {
       method: "GET",
@@ -462,13 +466,34 @@ export class AgentService {
 
   /**
    * Start Agent Langflow
-   * @returns AgentRun Successful Response
+   * @returns AgentRunResponse Successful Response
    * @throws ApiError
    */
-  public static agentStartAgentLangflow(): CancelablePromise<AgentRun> {
+  public static agentStartAgentLangflow(): CancelablePromise<AgentRunResponse> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/agent/langflow",
+    });
+  }
+
+  /**
+   * Get Agent Run
+   * @returns AgentStatusResponse Successful Response
+   * @throws ApiError
+   */
+  public static agentGetAgentRun(
+    data: AgentData["AgentGetAgentRun"],
+  ): CancelablePromise<AgentStatusResponse> {
+    const { runId } = data;
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/agent/{run_id}",
+      path: {
+        run_id: runId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
     });
   }
 }

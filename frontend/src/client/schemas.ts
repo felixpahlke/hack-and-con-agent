@@ -1,6 +1,35 @@
-export const $AgentRun = {
+export const $AgentRunResponse = {
   properties: {
-    message: {
+    run_id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+  },
+} as const;
+
+export const $AgentStatusResponse = {
+  properties: {
+    steps: {
+      type: "array",
+      contains: {
+        type: "Step",
+      },
+      isRequired: true,
+    },
+    status: {
+      type: "string",
+      isRequired: true,
+    },
+    status_message: {
+      type: "string",
+      isRequired: true,
+    },
+    draft_body: {
+      type: "string",
+      isRequired: true,
+    },
+    draft_subject: {
       type: "string",
       isRequired: true,
     },
@@ -175,6 +204,28 @@ export const $ItemsPublic = {
 export const $Message = {
   properties: {
     message: {
+      type: "string",
+      isRequired: true,
+    },
+  },
+} as const;
+
+export const $Step = {
+  properties: {
+    id: {
+      type: "string",
+      isRequired: true,
+      format: "uuid",
+    },
+    type: {
+      type: "string",
+      isRequired: true,
+    },
+    text: {
+      type: "string",
+      isRequired: true,
+    },
+    status: {
       type: "string",
       isRequired: true,
     },
