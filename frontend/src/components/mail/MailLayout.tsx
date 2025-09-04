@@ -24,7 +24,7 @@ export function MailLayout() {
     setTemplateData(null);
   };
 
-  const { data: agentStatus, isPending: isAgentStatusPending } = useQuery({
+  const { data: agentStatus } = useQuery({
     queryKey: ["agentStatus", agentRunId.current],
     queryFn: () =>
       AgentService.agentGetAgentRun({ runId: agentRunId.current ?? "" }),
@@ -34,11 +34,7 @@ export function MailLayout() {
 
   console.log(agentStatus);
 
-  const {
-    mutate: startAgent,
-    data: agentResponse,
-    isPending,
-  } = useMutation({
+  const { mutate: startAgent, isPending } = useMutation({
     mutationFn: (mail: Mail) => {
       return AgentService.agentStartAgent({
         subject: mail.subject,

@@ -48,7 +48,7 @@ const UserInformation = () => {
 
   const { mutate: updateUser, isPending } = useMutation({
     mutationFn: (data: UserUpdateMe) =>
-      UsersService.updateUserMe({ requestBody: data }),
+      UsersService.usersUpdateUserMe({ requestBody: data }),
     onSuccess: () => {
       toast.success("User updated successfully.");
       toggleEditMode();

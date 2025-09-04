@@ -229,15 +229,6 @@ export function WorkflowVisualization({
     }
   };
 
-  const handleShowTemplate = () => {
-    if (agentRun?.draft_body && agentRun?.draft_subject && onShowTemplate) {
-      onShowTemplate({
-        subject: editableSubject || agentRun.draft_subject,
-        body: editableBody || agentRun.draft_body,
-      });
-    }
-  };
-
   const handleSaveChanges = () => {
     setIsEditing(false);
     if (onShowTemplate) {

@@ -3,7 +3,6 @@ import { Edit, MoreVertical, Trash } from "lucide-react";
 
 import type { ItemPublic, UserPublic } from "../../client";
 import EditUser from "../admin/EditUser";
-import EditItem from "../items/EditItem";
 import Delete from "./DeleteAlert";
 
 import {
@@ -48,19 +47,11 @@ const ActionsMenu = ({ type, value, disabled }: ActionsMenuProps) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {type === "User" ? (
-        <EditUser
-          user={value as UserPublic}
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-        />
-      ) : (
-        <EditItem
-          item={value as ItemPublic}
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-        />
-      )}
+      <EditUser
+        user={value as UserPublic}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
       <Delete
         type={type}
         id={value.id}

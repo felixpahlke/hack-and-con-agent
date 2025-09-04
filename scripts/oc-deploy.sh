@@ -163,6 +163,11 @@ done
 
 read -p "Choose a Signup access password (leave empty if users should not be able to signup themselves): " SIGNUP_ACCESS_PASSWORD
 
+# WatsonX configuration
+read -p "Enter your WatsonX API Key: " WATSONX_API_KEY
+read -p "Enter your WatsonX Project ID: " WATSONX_PROJECT_ID
+read -p "Enter your WatsonX URL: " WATSONX_URL
+
 # Generate a secure random secret key
 SECRET_KEY=$(openssl rand -hex 32)
 print_success "Generated secure secret key for backend"
@@ -300,7 +305,10 @@ oc create secret generic backend-envs \
     --from-literal=POSTGRES_USER=$POSTGRES_USER \
     --from-literal=ENVIRONMENT=production \
     --from-literal=FIRST_SUPERUSER=$FIRST_SUPERUSER \
-    --from-literal=SIGNUP_ACCESS_PASSWORD=$SIGNUP_ACCESS_PASSWORD
+    --from-literal=SIGNUP_ACCESS_PASSWORD=$SIGNUP_ACCESS_PASSWORD \
+    --from-literal=WATSONX_API_KEY=$WATSONX_API_KEY \
+    --from-literal=WATSONX_PROJECT_ID=$WATSONX_PROJECT_ID \
+    --from-literal=WATSONX_URL=$WATSONX_URL
 
 print_status "Applying backend environment..."
 oc patch deployment backend --patch '{"spec":{"template":{"spec":{"containers":[{"name":"backend","envFrom":[{"secretRef":{"name":"backend-envs"}}]}]}}}}'

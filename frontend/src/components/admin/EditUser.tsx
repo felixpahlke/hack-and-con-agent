@@ -58,7 +58,7 @@ const EditUser = ({ user, isOpen, onClose }: EditUserProps) => {
 
   const { mutate: updateUser, isPending } = useMutation({
     mutationFn: (data: UserUpdate) =>
-      UsersService.updateUser({ userId: user.id, requestBody: data }),
+      UsersService.usersUpdateUser({ userId: user.id, requestBody: data }),
     onSuccess: () => {
       toast.success("User updated successfully.");
       form.reset();

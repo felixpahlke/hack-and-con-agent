@@ -51,7 +51,7 @@ const AddUser = ({ isOpen, onClose }: AddUserProps) => {
 
   const { mutate: createUser, isPending } = useMutation({
     mutationFn: (data: UserCreate) =>
-      UsersService.createUser({ requestBody: data }),
+      UsersService.usersCreateUser({ requestBody: data }),
     onSuccess: () => {
       toast.success("User created successfully.");
       form.reset();

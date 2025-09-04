@@ -35,7 +35,7 @@ const ChangePassword = () => {
 
   const { mutate: updatePassword, isPending } = useMutation({
     mutationFn: (data: UpdatePassword) =>
-      UsersService.updatePasswordMe({ requestBody: data }),
+      UsersService.usersUpdatePasswordMe({ requestBody: data }),
     onSuccess: () => {
       toast.success("Password updated successfully.");
       form.reset();

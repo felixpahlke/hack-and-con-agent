@@ -1,9 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { UserPublic } from "../../client";
 import useAuth from "../../hooks/useAuth";
 import { ModeToggle } from "../theme/ThemeSwitcher";
 import { Separator } from "@/components/ui/separator";
@@ -12,8 +10,6 @@ import UserMenu from "./UserMenu";
 
 export function Header() {
   const { logout } = useAuth();
-  const queryClient = useQueryClient();
-  const currentUser = queryClient.getQueryData<UserPublic>(["currentUser"]);
   const isMobile = useIsMobile();
 
   const handleLogout = () => {
