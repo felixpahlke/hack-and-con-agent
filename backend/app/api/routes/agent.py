@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 from sqlmodel import SQLModel
@@ -20,6 +21,7 @@ class Step(SQLModel):
     type: str
     text: str
     status: str
+    created_at: datetime
 
 
 class AgentStatusResponse(SQLModel):

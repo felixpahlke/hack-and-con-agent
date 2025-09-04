@@ -825,11 +825,21 @@ Expertenanalyse:
 
 Schreibe eine vollständige E-Mail-Antwort, die:
 - Professionell und höflich ist
+- Mache klare Ansagen (nicht "in der Regel" oder "meistens" etc)
 - Alle wichtigen Informationen aus der Expertenanalyse berücksichtigt
 - Konkrete nächste Schritte aufzeigt
 - Bei Bedarf Kontaktdaten oder weitere Hilfsangebote enthält
-- Mit einer angemessenen Grußformel endet
 - Vollständig auf Deutsch verfasst ist
+
+Die Mail sollte wenn möglich einem Bestimmten Schema folgen:
+- Anrede (Sehr geehrter Herr/Sehr geehrte Frau)
+- Vielen Dank für Ihre Anfrage (Anfrage nochmal kurz auffassen/zusammenfassen)
+- Antwort auf die Anfrage
+- ggf. Hinweise auf fehlende Unterlagen
+- Nächste Schritte
+- Kontaktdaten
+- Angemessene Grußformel
+- Anhang (falls vorhanden)
 
 Beginne die E-Mail mit einer passenden Anrede und beende sie mit einer professionellen Grußformel.
 Verwende einen empathischen, aber sachlichen Ton."""

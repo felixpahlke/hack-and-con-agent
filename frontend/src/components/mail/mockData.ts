@@ -2,6 +2,47 @@ import { Mail, MailFolder } from "./types";
 
 export const mockMails: Mail[] = [
   {
+    id: "9",
+    subject: "Antrag auf Zuzahlungsbefreiung - Diabetes Typ 2",
+    sender: "Sabine Wagner",
+    senderEmail: "sabine.wagner@email.de",
+    preview:
+      "Sehr geehrte Damen und Herren, aufgrund meiner chronischen Erkrankung Diabetes Typ 2 beantrage ich eine Zuzahlungsbefreiung...",
+    body: `Sehr geehrte Damen und Herren,
+
+aufgrund meiner chronischen Erkrankung beantrage ich hiermit eine Zuzahlungsbefreiung für das Jahr 2025.
+
+Details zu meiner Erkrankung:
+- Diagnose: Diabetes mellitus Typ 2
+- Erstdiagnose: März 2019
+- Behandelnder Arzt: Dr. med. Zimmermann, Diabetologie
+- Regelmäßige Medikation erforderlich
+
+Meine monatlichen Zuzahlungen:
+- Medikamente: ca. 45,00 €
+- Blutzuckerteststreifen: ca. 15,00 €
+- Arztbesuche: ca. 20,00 €
+- Gesamt pro Monat: ca. 80,00 €
+
+Ich bitte um Prüfung meines Antrags und Zusendung der entsprechenden Bescheinigung.
+
+Mit freundlichen Grüßen,
+Sabine Wagner
+Versichertennummer: 22334455`,
+    date: new Date("2024-01-16T10:15:00"),
+    read: false,
+    starred: false,
+    important: true,
+    labels: ["Zuzahlungsbefreiung", "Diabetes"],
+    attachments: [
+      {
+        name: "arztbericht-diabetes.pdf",
+        size: "0.9 MB",
+        type: "PDF",
+      },
+    ],
+  },
+  {
     id: "1",
     subject: "Kostenübernahme für Physiotherapie",
     sender: "Anna Müller",

@@ -54,6 +54,7 @@ export type Step = {
   type: string;
   text: string;
   status: string;
+  created_at: string;
 };
 
 export type Token = {

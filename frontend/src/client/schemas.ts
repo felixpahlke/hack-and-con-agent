@@ -229,6 +229,11 @@ export const $Step = {
       type: "string",
       isRequired: true,
     },
+    created_at: {
+      type: "string",
+      isRequired: true,
+      format: "date-time",
+    },
   },
 } as const;
 

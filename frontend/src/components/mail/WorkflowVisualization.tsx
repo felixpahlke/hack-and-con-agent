@@ -15,6 +15,7 @@ interface AgentRun {
     type: string;
     text: string;
     status: string;
+    created_at?: string;
   }>;
   status: string;
   status_message: string;
@@ -136,17 +137,37 @@ export function WorkflowVisualization({
       timestamp: new Date(),
     });
 
-    // Map backend steps to frontend steps
-    agentRun.steps.forEach((step) => {
+    // Sort backend steps by created_at before mapping
+    const sortedSteps = [...agentRun.steps].sort((a, b) => {
+      if (!a.created_at || !b.created_at) return 0;
+      // Add Z to the end of created_at to indicate UTC timestamp
+      const timestampA = a.created_at.endsWith("Z")
+        ? a.created_at
+        : `${a.created_at}Z`;
+      const timestampB = b.created_at.endsWith("Z")
+        ? b.created_at
+        : `${b.created_at}Z`;
+      return new Date(timestampA).getTime() - new Date(timestampB).getTime();
+    });
+
+    // Map sorted backend steps to frontend steps
+    sortedSteps.forEach((step) => {
       const stepConfig = STEP_MAPPING[step.type as keyof typeof STEP_MAPPING];
       if (stepConfig) {
+        // Add Z to the end of created_at to indicate UTC timestamp
+        const timestamp = step.created_at
+          ? step.created_at.endsWith("Z")
+            ? step.created_at
+            : `${step.created_at}Z`
+          : null;
+
         workflowSteps.push({
           id: step.id,
           name: stepConfig.name,
           icon: stepConfig.icon,
           message: step.text,
           status: step.status as "pending" | "running" | "completed" | "error",
-          timestamp: new Date(),
+          timestamp: timestamp ? new Date(timestamp) : new Date(),
         });
       }
     });
@@ -372,7 +393,7 @@ export function WorkflowVisualization({
                 placeholder="E-Mail Text eingeben..."
               />
             ) : (
-              <div className="max-h-96 overflow-auto whitespace-pre-wrap rounded border bg-background p-4 text-sm text-foreground">
+              <div className="max-h-[30rem] overflow-auto whitespace-pre-wrap rounded border bg-background p-4 text-foreground">
                 {editableBody}
               </div>
             )}

@@ -1,5 +1,5 @@
 import uuid
-
+from datetime import datetime
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -42,6 +42,7 @@ class Step(SQLModel, table=True):
     type: str = Field()
     text: str = Field()
     status: str = Field()
+    created_at: datetime = Field(default_factory=datetime.now)
     agent_run_id: uuid.UUID = Field(
         foreign_key="agentrun.id", nullable=False, ondelete="CASCADE"
     )

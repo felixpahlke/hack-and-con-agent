@@ -148,7 +148,7 @@ export function MailLayout() {
                   <h4 className="mb-2 font-medium text-foreground">
                     E-Mail Text:
                   </h4>
-                  <div className="max-h-96 overflow-auto whitespace-pre-wrap rounded border bg-background p-4 text-sm text-foreground">
+                  <div className="max-h-[30rem] overflow-auto whitespace-pre-wrap rounded border bg-background p-4 text-foreground">
                     {templateData.body}
                   </div>
                 </div>
@@ -157,7 +157,13 @@ export function MailLayout() {
               <div className="mt-4 flex gap-2 border-t pt-4">
                 <button
                   className="btn-primary-gradient flex-1"
-                  onClick={() => {}}
+                  onClick={() => {
+                    setSelectedMail(null);
+                    setShowTemplate(false);
+                    setShowWorkflow(false);
+                    setTemplateData(null);
+                    agentRunId.current = undefined;
+                  }}
                 >
                   Senden
                 </button>
