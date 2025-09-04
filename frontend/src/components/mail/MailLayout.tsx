@@ -4,9 +4,11 @@ import { MailDetail } from "./MailDetail";
 import { Mail } from "./types";
 import { useMutation } from "@tanstack/react-query";
 import { AgentService } from "@/client/services";
+import { WorkflowVisualization } from "./WorkflowVisualization";
 
 export function MailLayout() {
   const [selectedMail, setSelectedMail] = useState<Mail | null>(null);
+  const [showWorkflow, setShowWorkflow] = useState(false);
 
   const handleMailSelect = (mail: Mail) => {
     setSelectedMail(mail);
@@ -24,7 +26,18 @@ export function MailLayout() {
         sender: mail.sender,
       });
     },
+    onSuccess: () => {
+      // Hide workflow visualization after completion
+      setTimeout(() => {
+        setShowWorkflow(false);
+      }, 1000);
+    },
   });
+
+  const handleStartAgent = (mail: Mail) => {
+    setShowWorkflow(true);
+    startAgent(mail);
+  };
 
   console.log(agentResponse?.message);
 
@@ -47,7 +60,12 @@ export function MailLayout() {
 
         {/* Right Right Panel - AI Assistant */}
         <div className="card-gradient flex-1 overflow-hidden p-6">
-          {agentResponse?.message ? (
+          {showWorkflow ? (
+            <WorkflowVisualization 
+              isActive={showWorkflow} 
+              onComplete={() => setShowWorkflow(false)}
+            />
+          ) : agentResponse?.message ? (
             <div className="flex h-full flex-col">
               <div className="mb-4 flex items-center space-x-2">
                 <div className="bg-gradient-accent rounded-full p-2">
@@ -82,7 +100,7 @@ export function MailLayout() {
                   className="btn-primary-gradient"
                   onClick={() => {
                     if (selectedMail) {
-                      startAgent(selectedMail);
+                      handleStartAgent(selectedMail);
                     }
                   }}
                   disabled={isPending}
@@ -121,7 +139,7 @@ export function MailLayout() {
                     className="btn-primary-gradient"
                     onClick={() => {
                       if (selectedMail) {
-                        startAgent(selectedMail);
+                        handleStartAgent(selectedMail);
                       }
                     }}
                     disabled={isPending || !selectedMail}
