@@ -17,64 +17,71 @@ import type {
   ItemPublic,
   ItemsPublic,
   ItemUpdate,
+  AgentRun,
 } from "./models";
 
 export type LoginData = {
-  LoginAccessToken: {
+  LoginLoginAccessToken: {
     formData: Body_login_login_access_token;
   };
 };
 
 export type UsersData = {
-  ReadUsers: {
+  UsersReadUsers: {
     limit?: number;
     skip?: number;
   };
-  CreateUser: {
+  UsersCreateUser: {
     requestBody: UserCreate;
   };
-  UpdateUserMe: {
+  UsersUpdateUserMe: {
     requestBody: UserUpdateMe;
   };
-  UpdatePasswordMe: {
+  UsersUpdatePasswordMe: {
     requestBody: UpdatePassword;
   };
-  RegisterUser: {
+  UsersRegisterUser: {
     requestBody: UserRegister;
   };
-  ReadUserById: {
+  UsersReadUserById: {
     userId: string;
   };
-  UpdateUser: {
+  UsersUpdateUser: {
     requestBody: UserUpdate;
     userId: string;
   };
-  DeleteUser: {
+  UsersDeleteUser: {
     userId: string;
   };
 };
 
 export type ItemsData = {
-  ReadItems: {
+  ItemsReadItems: {
     limit?: number;
     skip?: number;
   };
-  CreateItem: {
+  ItemsCreateItem: {
     requestBody: ItemCreate;
   };
-  ReadItem: {
+  ItemsReadItem: {
     id: string;
   };
-  UpdateItem: {
+  ItemsUpdateItem: {
     id: string;
     requestBody: ItemUpdate;
   };
-  DeleteItem: {
+  ItemsDeleteItem: {
     id: string;
   };
 };
 
-export type AgentData = {};
+export type AgentData = {
+  AgentStartAgent: {
+    body: string;
+    sender: string;
+    subject: string;
+  };
+};
 
 export class LoginService {
   /**
@@ -83,8 +90,8 @@ export class LoginService {
    * @returns Token Successful Response
    * @throws ApiError
    */
-  public static loginAccessToken(
-    data: LoginData["LoginAccessToken"],
+  public static loginLoginAccessToken(
+    data: LoginData["LoginLoginAccessToken"],
   ): CancelablePromise<Token> {
     const { formData } = data;
     return __request(OpenAPI, {
@@ -104,7 +111,7 @@ export class LoginService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static testToken(): CancelablePromise<UserPublic> {
+  public static loginTestToken(): CancelablePromise<UserPublic> {
     return __request(OpenAPI, {
       method: "POST",
       url: "/api/v1/login/test-token",
@@ -119,8 +126,8 @@ export class UsersService {
    * @returns UsersPublic Successful Response
    * @throws ApiError
    */
-  public static readUsers(
-    data: UsersData["ReadUsers"] = {},
+  public static usersReadUsers(
+    data: UsersData["UsersReadUsers"] = {},
   ): CancelablePromise<UsersPublic> {
     const { skip = 0, limit = 100 } = data;
     return __request(OpenAPI, {
@@ -142,8 +149,8 @@ export class UsersService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static createUser(
-    data: UsersData["CreateUser"],
+  public static usersCreateUser(
+    data: UsersData["UsersCreateUser"],
   ): CancelablePromise<UserPublic> {
     const { requestBody } = data;
     return __request(OpenAPI, {
@@ -163,7 +170,7 @@ export class UsersService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static readUserMe(): CancelablePromise<UserPublic> {
+  public static usersReadUserMe(): CancelablePromise<UserPublic> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/v1/users/me",
@@ -176,7 +183,7 @@ export class UsersService {
    * @returns Message Successful Response
    * @throws ApiError
    */
-  public static deleteUserMe(): CancelablePromise<Message> {
+  public static usersDeleteUserMe(): CancelablePromise<Message> {
     return __request(OpenAPI, {
       method: "DELETE",
       url: "/api/v1/users/me",
@@ -189,8 +196,8 @@ export class UsersService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static updateUserMe(
-    data: UsersData["UpdateUserMe"],
+  public static usersUpdateUserMe(
+    data: UsersData["UsersUpdateUserMe"],
   ): CancelablePromise<UserPublic> {
     const { requestBody } = data;
     return __request(OpenAPI, {
@@ -210,8 +217,8 @@ export class UsersService {
    * @returns Message Successful Response
    * @throws ApiError
    */
-  public static updatePasswordMe(
-    data: UsersData["UpdatePasswordMe"],
+  public static usersUpdatePasswordMe(
+    data: UsersData["UsersUpdatePasswordMe"],
   ): CancelablePromise<Message> {
     const { requestBody } = data;
     return __request(OpenAPI, {
@@ -231,8 +238,8 @@ export class UsersService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static registerUser(
-    data: UsersData["RegisterUser"],
+  public static usersRegisterUser(
+    data: UsersData["UsersRegisterUser"],
   ): CancelablePromise<UserPublic> {
     const { requestBody } = data;
     return __request(OpenAPI, {
@@ -252,8 +259,8 @@ export class UsersService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static readUserById(
-    data: UsersData["ReadUserById"],
+  public static usersReadUserById(
+    data: UsersData["UsersReadUserById"],
   ): CancelablePromise<UserPublic> {
     const { userId } = data;
     return __request(OpenAPI, {
@@ -274,8 +281,8 @@ export class UsersService {
    * @returns UserPublic Successful Response
    * @throws ApiError
    */
-  public static updateUser(
-    data: UsersData["UpdateUser"],
+  public static usersUpdateUser(
+    data: UsersData["UsersUpdateUser"],
   ): CancelablePromise<UserPublic> {
     const { userId, requestBody } = data;
     return __request(OpenAPI, {
@@ -298,8 +305,8 @@ export class UsersService {
    * @returns Message Successful Response
    * @throws ApiError
    */
-  public static deleteUser(
-    data: UsersData["DeleteUser"],
+  public static usersDeleteUser(
+    data: UsersData["UsersDeleteUser"],
   ): CancelablePromise<Message> {
     const { userId } = data;
     return __request(OpenAPI, {
@@ -322,8 +329,8 @@ export class ItemsService {
    * @returns ItemsPublic Successful Response
    * @throws ApiError
    */
-  public static readItems(
-    data: ItemsData["ReadItems"] = {},
+  public static itemsReadItems(
+    data: ItemsData["ItemsReadItems"] = {},
   ): CancelablePromise<ItemsPublic> {
     const { skip = 0, limit = 100 } = data;
     return __request(OpenAPI, {
@@ -345,8 +352,8 @@ export class ItemsService {
    * @returns ItemPublic Successful Response
    * @throws ApiError
    */
-  public static createItem(
-    data: ItemsData["CreateItem"],
+  public static itemsCreateItem(
+    data: ItemsData["ItemsCreateItem"],
   ): CancelablePromise<ItemPublic> {
     const { requestBody } = data;
     return __request(OpenAPI, {
@@ -366,8 +373,8 @@ export class ItemsService {
    * @returns ItemPublic Successful Response
    * @throws ApiError
    */
-  public static readItem(
-    data: ItemsData["ReadItem"],
+  public static itemsReadItem(
+    data: ItemsData["ItemsReadItem"],
   ): CancelablePromise<ItemPublic> {
     const { id } = data;
     return __request(OpenAPI, {
@@ -388,8 +395,8 @@ export class ItemsService {
    * @returns ItemPublic Successful Response
    * @throws ApiError
    */
-  public static updateItem(
-    data: ItemsData["UpdateItem"],
+  public static itemsUpdateItem(
+    data: ItemsData["ItemsUpdateItem"],
   ): CancelablePromise<ItemPublic> {
     const { id, requestBody } = data;
     return __request(OpenAPI, {
@@ -412,8 +419,8 @@ export class ItemsService {
    * @returns Message Successful Response
    * @throws ApiError
    */
-  public static deleteItem(
-    data: ItemsData["DeleteItem"],
+  public static itemsDeleteItem(
+    data: ItemsData["ItemsDeleteItem"],
   ): CancelablePromise<Message> {
     const { id } = data;
     return __request(OpenAPI, {
@@ -432,13 +439,36 @@ export class ItemsService {
 export class AgentService {
   /**
    * Start Agent
-   * @returns unknown Successful Response
+   * @returns AgentRun Successful Response
    * @throws ApiError
    */
-  public static startAgent(): CancelablePromise<unknown> {
+  public static agentStartAgent(
+    data: AgentData["AgentStartAgent"],
+  ): CancelablePromise<AgentRun> {
+    const { subject, body, sender } = data;
     return __request(OpenAPI, {
       method: "GET",
-      url: "/api/v1/agent/",
+      url: "/api/v1/agent/langgraph",
+      query: {
+        subject,
+        body,
+        sender,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+
+  /**
+   * Start Agent Langflow
+   * @returns AgentRun Successful Response
+   * @throws ApiError
+   */
+  public static agentStartAgentLangflow(): CancelablePromise<AgentRun> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/agent/langflow",
     });
   }
 }

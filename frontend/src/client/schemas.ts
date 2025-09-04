@@ -1,3 +1,12 @@
+export const $AgentRun = {
+  properties: {
+    message: {
+      type: "string",
+      isRequired: true,
+    },
+  },
+} as const;
+
 export const $Body_login_login_access_token = {
   properties: {
     grant_type: {

@@ -1,27 +1,28 @@
 from fastapi import APIRouter
+from sqlmodel import SQLModel
 
 from app.agent.langflow import run_langflow
 from app.agent.langgraph import run_graph
+from app.api.deps import SessionDep
 
 router = APIRouter()
 
 
-@router.get("/langgraph")
-async def start_agent():
-    messages = [
-        {
-            "role": "user",
-            "content": "Hello, how are you?",
-        }
-    ]
+class AgentRun(SQLModel):
+    message: str
 
-    response = run_graph(messages)
+
+@router.get("/langgraph", response_model=AgentRun)
+async def start_agent(session: SessionDep, subject: str, body: str, sender: str):
+    mail = f"Subject: {subject}\nBody: {body}\nSender: {sender}"
+
+    response = run_graph(mail)
 
     print("RESULT", response)
-    return {"message": response}
+    return AgentRun(message=response)
 
 
-@router.get("/langflow")
+@router.get("/langflow", response_model=AgentRun)
 async def start_agent_langflow():
     response = run_langflow()
-    return {"message": response}
+    return AgentRun(message=response)
