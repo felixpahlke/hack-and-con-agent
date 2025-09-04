@@ -54,6 +54,11 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
+    # For the agent
+    WATSONX_API_KEY: str = ""
+    WATSONX_URL: str = ""
+    WATSONX_PROJECT_ID: str = ""
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:

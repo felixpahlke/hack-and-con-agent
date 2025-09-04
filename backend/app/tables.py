@@ -23,3 +23,26 @@ class Item(SQLModel, table=True):
         foreign_key="user.id", nullable=False, ondelete="CASCADE"
     )
     owner: User | None = Relationship(back_populates="items")
+
+
+class AgentRun(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    mail_sender: str = Field(max_length=255)
+    mail_subject: str = Field(max_length=255)
+    mail_body: str = Field(max_length=255)
+    status: str = Field(max_length=255)
+    status_message: str = Field(max_length=255)
+    draft_body: str = Field(max_length=255)
+    draft_subject: str = Field(max_length=255)
+    steps: list["Step"] = Relationship(back_populates="agent_run", cascade_delete=True)
+
+
+class Step(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    type: str = Field(max_length=255)
+    text: str = Field(max_length=255)
+    status: str = Field(max_length=255)
+    agent_run_id: uuid.UUID = Field(
+        foreign_key="agentrun.id", nullable=False, ondelete="CASCADE"
+    )
+    agent_run: AgentRun | None = Relationship(back_populates="steps")

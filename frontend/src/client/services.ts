@@ -74,6 +74,8 @@ export type ItemsData = {
   };
 };
 
+export type AgentData = {};
+
 export class LoginService {
   /**
    * Login Access Token
@@ -423,6 +425,20 @@ export class ItemsService {
       errors: {
         422: `Validation Error`,
       },
+    });
+  }
+}
+
+export class AgentService {
+  /**
+   * Start Agent
+   * @returns unknown Successful Response
+   * @throws ApiError
+   */
+  public static startAgent(): CancelablePromise<unknown> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/api/v1/agent/",
     });
   }
 }
